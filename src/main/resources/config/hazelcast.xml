@@ -1,0 +1,10 @@
+
+<hazelcast xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-2.0.xsd"
+    xmlns="http://www.hazelcast.com/schema/config"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<serialization>
+  <serializers>
+    <serializer type-class="com.diviso.stream.kafka.Customer" class-name="com.diviso.stream.kafka.CustomerCacheSerializer" />
+  </serializers>
+</serialization>
+</hazelcast>

@@ -5,6 +5,7 @@ import io.github.jhipster.config.JHipsterProperties;
 
 import com.hazelcast.config.*;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.nio.serialization.ClassDefinition;
 import com.hazelcast.core.Hazelcast;
 
 import org.slf4j.Logger;
@@ -69,6 +70,11 @@ public class CacheConfiguration {
             return hazelCastInstance;
         }
         Config config = new Config();
+  
+        /*SerializerConfig serializerConfig=new SerializerConfig();
+        serializerConfig.setImplementation(new CustomerCacheSerializer());
+        serializerConfig.setTypeClass(Customer.class).setClass(CustomerCacheSerializer.class);
+      config.getSerializationConfig().addSerializerConfig(serializerConfig);*/
         config.setInstanceName("JhipsterKafkaStreamCloud");
         config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
         if (this.registration == null) {
@@ -87,7 +93,11 @@ public class CacheConfiguration {
                 config.getNetworkConfig().setPort(serverProperties.getPort() + 5701);
                 config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(true);
                 for (ServiceInstance instance : discoveryClient.getInstances(serviceId)) {
-                    String clusterMember = "127.0.0.1:" + (instance.getPort() + 5701);
+                    String clusterMember = "127.0.0.1:"+instance.getPort() + 5701; 
+                /*+ Maximum size of the map. When max size is reached,
+                            map is evicted based on the policy defined.
+                            Any integer between 0 and Integer.MAX_VALUE. 0 means
+                            Integer.MAX_VALUE. Default is 0.(instance.getPort() + 5701);*/
                     log.debug("Adding Hazelcast (dev) cluster member " + clusterMember);
                     config.getNetworkConfig().getJoin().getTcpIpConfig().addMember(clusterMember);
                 }
@@ -99,6 +109,7 @@ public class CacheConfiguration {
                     log.debug("Adding Hazelcast (prod) cluster member " + clusterMember);
                     config.getNetworkConfig().getJoin().getTcpIpConfig().addMember(clusterMember);
                 }
+                
             }
         }
         config.getMapConfigs().put("default", initializeDefaultMapConfig(jHipsterProperties));
@@ -120,28 +131,28 @@ public class CacheConfiguration {
     private MapConfig initializeDefaultMapConfig(JHipsterProperties jHipsterProperties) {
         MapConfig mapConfig = new MapConfig();
 
-        /*
-        Number of backups. If 1 is set as the backup-count for example,
+        
+        /*Number of backups. If 1 is set as the backup-count for example,
         then all entries of the map will be copied to another JVM for
-        fail-safety. Valid numbers are 0 (no backup), 1, 2, 3.
-        */
+        fail-safety. Valid numbers are 0 (no backup), 1, 2, 3.*/
+        
         mapConfig.setBackupCount(jHipsterProperties.getCache().getHazelcast().getBackupCount());
 
-        /*
-        Valid values are:
+        
+        /*Valid values are:
         NONE (no eviction),
         LRU (Least Recently Used),
         LFU (Least Frequently Used).
-        NONE is the default.
-        */
+        NONE is the default.*/
+        
         mapConfig.setEvictionPolicy(EvictionPolicy.LRU);
 
-        /*
-        Maximum size of the map. When max size is reached,
+        
+        /*Maximum size of the map. When max size is reached,
         map is evicted based on the policy defined.
         Any integer between 0 and Integer.MAX_VALUE. 0 means
-        Integer.MAX_VALUE. Default is 0.
-        */
+        Integer.MAX_VALUE. Default is 0.*/
+        
         mapConfig.setMaxSizeConfig(new MaxSizeConfig(0, MaxSizeConfig.MaxSizePolicy.USED_HEAP_SIZE));
 
         return mapConfig;

@@ -7,6 +7,8 @@ import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.annotation.InboundChannelAdapter;
+import org.springframework.integration.annotation.MessageEndpoint;
+import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.messaging.support.GenericMessage;
 
@@ -18,7 +20,8 @@ import org.springframework.messaging.support.GenericMessage;
  * See http://docs.spring.io/spring-cloud-stream/docs/current/reference/htmlsingle/
  * for the official Spring Cloud Stream documentation.
  */
-@EnableBinding(value = { Source.class })
+
+@EnableBinding(value = { MultipleProcessorsConfig.class})
 public class MessagingConfiguration {
 
     /**
@@ -27,10 +30,10 @@ public class MessagingConfiguration {
      * In order to see the test messages, you can use the Kafka command-line client:
      * "./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic topic-jhipster --from-beginning".
      */
-    @Bean
-    @InboundChannelAdapter(value = Source.OUTPUT)
+   /*@Bean
+    @InboundChannelAdapter(channel = MultipleProcessorsConfig.OUTPUT)
     public MessageSource<String> timerMessageSource() {
         return () -> new GenericMessage<>("Test message from JHipster sent at " +
             new SimpleDateFormat().format(new Date()));
-    }
+    }*/
 }
